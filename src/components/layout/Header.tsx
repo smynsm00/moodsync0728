@@ -10,6 +10,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenExportModal }) => {
   const { 
+    images,
     profiles,
     projects,
     currentUserId,

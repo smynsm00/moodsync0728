@@ -49,23 +49,17 @@ export const RightSidebar: React.FC = () => {
   };
 
   const handleCopyJson = async () => {
-    if (userTier === 'free') {
-      toggleUserTier();
-      return;
-    }
-    const json = generateJsonDesignTokens(activeImage!);
-    const success = await copyToClipboard(json);
-    if (success) {
-      setCopiedJson(true);
-      setTimeout(() => setCopiedJson(false), 2000);
+    if (activeImage) {
+      const json = generateJsonDesignTokens(activeImage);
+      const success = await copyToClipboard(json);
+      if (success) {
+        setCopiedJson(true);
+        setTimeout(() => setCopiedJson(false), 2000);
+      }
     }
   };
 
   const handleDownloadTokens = () => {
-    if (userTier === 'free') {
-      toggleUserTier();
-      return;
-    }
     if (activeImage) {
       downloadJsonTokens(activeImage);
       confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });

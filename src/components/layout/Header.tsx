@@ -140,9 +140,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportModal }) => {
               ))}
             </select>
 
-            <span className="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 shrink-0">
-              {images.length} Assets
-            </span>
 
             <button
               onClick={() => setIsCreateModalOpen(true)}

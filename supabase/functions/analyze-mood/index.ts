@@ -27,11 +27,37 @@ serve(async (req) => {
     const { prompt } = await req.json();
     const userPrompt = prompt || "이 이미지의 감성 무드 및 어울리는 보정 필터 톤을 2줄로 분석해줘.";
 
-    // 2. Try Gemini models (gemini-2.0-flash -> gemini-1.5-flash)
-    const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
+    // 2. Fetch available models dynamically for this user's API Key
+    let candidateModels: string[] = [
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-pro',
+      'gemini-1.5-flash',
+      'gemini-2.0-flash-exp',
+      'gemini-2.0-flash',
+    ];
+
+    try {
+      const listResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+      if (listResp.ok) {
+        const listData = await listResp.json();
+        if (listData?.models && Array.isArray(listData.models)) {
+          const available = listData.models
+            .filter((m: any) => m.supportedGenerationMethods?.includes('generateContent'))
+            .map((m: any) => m.name.replace('models/', ''));
+          if (available.length > 0) {
+            // Prioritize flash / pro models
+            candidateModels = Array.from(new Set([...available, ...candidateModels]));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to dynamic list models, using fallback list:', e);
+    }
+
     let lastError = '';
 
-    for (const model of models) {
+    // 3. Try each candidate model until generateContent succeeds
+    for (const model of candidateModels) {
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       const geminiResponse = await fetch(geminiUrl, {
@@ -52,11 +78,9 @@ serve(async (req) => {
       } else {
         const errText = await geminiResponse.text();
         lastError = `[${model} 호출 실패 ${geminiResponse.status}]: ${errText}`;
-        console.warn(`Gemini model ${model} failed:`, errText);
       }
     }
 
-    // If all models failed, return detailed error in JSON with status 200 so UI can display detailed cause
     return new Response(
       JSON.stringify({ success: false, error: lastError }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }

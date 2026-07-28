@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Download, Crown, FileArchive, CheckCircle2, Lock, Layers } from 'lucide-react';
+import { X, Download, FileArchive, CheckCircle2, Layers } from 'lucide-react';
 import { useMoodSyncStore } from '../../store/useMoodSyncStore';
 import { batchExportZip, type ExportProgress } from '../../utils/exportEngine';
 import confetti from 'canvas-confetti';
@@ -10,7 +10,7 @@ interface BatchExportModalProps {
 }
 
 export const BatchExportModal: React.FC<BatchExportModalProps> = ({ isOpen, onClose }) => {
-  const { images, exportConfig, setExportConfig, userTier, toggleUserTier } = useMoodSyncStore();
+  const { images, exportConfig, setExportConfig, userTier } = useMoodSyncStore();
   const [isExporting, setIsExporting] = useState(false);
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -40,18 +40,10 @@ export const BatchExportModal: React.FC<BatchExportModalProps> = ({ isOpen, onCl
   };
 
   const handleFormatSelect = (fmt: 'jpg' | 'png' | 'webp' | 'json') => {
-    if ((fmt === 'png' || fmt === 'webp') && userTier === 'free') {
-      toggleUserTier();
-      return;
-    }
     setExportConfig({ format: fmt });
   };
 
   const handleResolutionSelect = (res: '1080p' | 'original') => {
-    if (res === 'original' && userTier === 'free') {
-      toggleUserTier();
-      return;
-    }
     setExportConfig({ resolutionMode: res });
   };
 
@@ -84,14 +76,14 @@ export const BatchExportModal: React.FC<BatchExportModalProps> = ({ isOpen, onCl
           <div>
             <label className="text-xs font-bold text-gray-300 block mb-2.5 flex items-center justify-between">
               <span>Export Format (파일 형식)</span>
-              {userTier === 'free' && <span className="text-[10px] text-amber-400 font-normal">PNG/WEBP는 PRO 전용</span>}
+              <span className="text-[10px] text-emerald-400 font-normal">전체 포맷 무료 이용 가능</span>
             </label>
             <div className="grid grid-cols-4 gap-2">
               {[
-                { id: 'jpg', label: 'JPG', desc: '표준 고품질', locked: false },
-                { id: 'png', label: 'PNG', desc: '무손실 원본', locked: userTier === 'free' },
-                { id: 'webp', label: 'WEBP', desc: '차세대 고효율', locked: userTier === 'free' },
-                { id: 'json', label: 'JSON Only', desc: '토큰 전용', locked: false },
+                { id: 'jpg', label: 'JPG', desc: '표준 고품질' },
+                { id: 'png', label: 'PNG', desc: '무손실 원본' },
+                { id: 'webp', label: 'WEBP', desc: '차세대 고효율' },
+                { id: 'json', label: 'JSON Only', desc: '토큰 전용' },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -104,11 +96,6 @@ export const BatchExportModal: React.FC<BatchExportModalProps> = ({ isOpen, onCl
                 >
                   <div className="text-xs font-bold">{item.label}</div>
                   <div className="text-[9px] text-gray-500 mt-0.5">{item.desc}</div>
-                  {item.locked && (
-                    <div className="absolute top-1 right-1 text-amber-400" title="PRO 전용">
-                      <Lock className="w-3 h-3" />
-                    </div>
-                  )}
                 </button>
               ))}
             </div>
@@ -118,7 +105,7 @@ export const BatchExportModal: React.FC<BatchExportModalProps> = ({ isOpen, onCl
           <div>
             <label className="text-xs font-bold text-gray-300 block mb-2.5 flex items-center justify-between">
               <span>Resolution Mode (해상도 선택)</span>
-              {userTier === 'free' && <span className="text-[10px] text-amber-400 font-normal">원본 해상도는 PRO 전용</span>}
+              <span className="text-[10px] text-emerald-400 font-normal">원본 해상도 무제한 무료</span>
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -140,19 +127,13 @@ export const BatchExportModal: React.FC<BatchExportModalProps> = ({ isOpen, onCl
                 onClick={() => handleResolutionSelect('original')}
                 className={`p-3 rounded-xl border text-left transition-all relative ${
                   exportConfig.resolutionMode === 'original'
-                    ? 'bg-amber-500/10 border-amber-500 text-white ring-2 ring-amber-500/50'
+                    ? 'bg-emerald-500/10 border-emerald-500 text-white ring-2 ring-emerald-500/50'
                     : 'bg-gray-900/50 border-white/5 text-gray-400 hover:border-white/20'
                 }`}
               >
                 <div className="text-xs font-bold text-white flex items-center justify-between">
                   <span>Original Full Res</span>
-                  {userTier === 'free' ? (
-                    <span className="text-[9px] px-1.5 py-0.2 bg-amber-500 text-black font-bold rounded flex items-center">
-                      <Crown className="w-2.5 h-2.5 mr-0.5" /> PRO
-                    </span>
-                  ) : (
-                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded">Unlocked</span>
-                  )}
+                  <span className="text-[9px] px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 rounded">Unlocked</span>
                 </div>
                 <p className="text-[10px] text-gray-400 mt-1">업로드된 고해상도 원본 100% 무손실 렌더링</p>
               </button>

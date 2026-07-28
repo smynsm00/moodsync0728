@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Sparkles, Crown, Download, Layers, ShieldAlert, CheckCircle2, UserCheck, Plus, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Sparkles, Download, Layers, CheckCircle2, UserCheck, Plus, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { useMoodSyncStore } from '../../store/useMoodSyncStore';
 import { CreateProjectModal } from '../modals/CreateProjectModal';
 import { AuthModal } from '../modals/AuthModal';
-import confetti from 'canvas-confetti';
 
 interface HeaderProps {
   onOpenExportModal: () => void;
@@ -11,9 +10,6 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenExportModal }) => {
   const { 
-    userTier, 
-    toggleUserTier, 
-    images, 
     profiles,
     projects,
     currentUserId,
@@ -35,18 +31,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportModal }) => {
   const displayProjects = userProjects.length > 0 
     ? userProjects 
     : projects.filter((p) => p.id === currentProjectId);
-
-  const handleTierUpgrade = () => {
-    toggleUserTier();
-    if (userTier === 'free') {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.2 },
-        colors: ['#6366F1', '#EC4899', '#06B6D4', '#F59E0B']
-      });
-    }
-  };
 
   const handleShare = () => {
     setCopiedLink(true);
@@ -168,28 +152,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenExportModal }) => {
             )}
           </button>
 
-          {/* ⭐ USER REQUESTED: 버튼 텍스트를 'Premium' 또는 'Free'로만 완벽히 단축 */}
-          <button
-            onClick={handleTierUpgrade}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all duration-300 shadow-sm ${
-              userTier === 'premium'
-                ? 'bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-pink-500/20 border-amber-500/50 text-amber-300 hover:border-amber-400 shadow-amber-500/10'
-                : 'bg-gray-800/80 border-gray-700 text-gray-300 hover:border-indigo-500/50 hover:text-white'
-            }`}
-            title={userTier === 'premium' ? 'Free 플랜으로 변경' : 'Premium 플랜으로 전환'}
-          >
-            {userTier === 'premium' ? (
-              <>
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span>Premium</span>
-              </>
-            ) : (
-              <>
-                <ShieldAlert className="w-3.5 h-3.5 text-gray-400" />
-                <span>Free</span>
-              </>
-            )}
-          </button>
+          {/* 100% Free Badge */}
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs font-bold shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <span>100% Free</span>
+          </div>
 
           {/* Batch Export CTA */}
           <button

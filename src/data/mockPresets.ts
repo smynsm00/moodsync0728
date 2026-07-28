@@ -43,7 +43,7 @@ export const MOCK_PRESETS: MoodPreset[] = [
     category: 'Vivid & Neon',
     description: '고대비 사이버펑크 스타일의 강렬한 마젠타/시안 네온 발색',
     previewColor: 'from-pink-600 to-cyan-500',
-    isPremium: true,
+    isPremium: false,
     defaultParams: {
       brightness: 110,
       contrast: 135,
@@ -97,7 +97,7 @@ export const MOCK_PRESETS: MoodPreset[] = [
     category: 'Cinematic',
     description: '해질녘 골든 아워의 황홀한 주황빛 노을을 강조하는 프리미엄 시네마 필터',
     previewColor: 'from-orange-500 to-red-600',
-    isPremium: true,
+    isPremium: false,
     defaultParams: {
       brightness: 105,
       contrast: 110,
@@ -115,7 +115,7 @@ export const MOCK_PRESETS: MoodPreset[] = [
     category: 'Commercial',
     description: '자연 친화적 브랜드나 패션 룩북에 어울리는 싱그러운 그린 톤 앤 매너',
     previewColor: 'from-emerald-600 to-teal-700',
-    isPremium: true,
+    isPremium: false,
     defaultParams: {
       brightness: 100,
       contrast: 110,

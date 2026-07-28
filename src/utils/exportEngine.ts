@@ -20,7 +20,7 @@ export async function batchExportZip(
   const tokensFolder = zip.folder("design_tokens");
   
   const total = images.length;
-  const maxDim = (userTier === 'free' || config.resolutionMode === '1080p') ? 1080 : undefined;
+  const maxDim = config.resolutionMode === '1080p' ? 1080 : undefined;
   const fileExt = config.format === 'json' ? 'jpg' : config.format;
 
   for (let i = 0; i < total; i++) {

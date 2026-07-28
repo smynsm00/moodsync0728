@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Upload, Crown, Star, Lock, Sparkles, Image as ImageIcon, Trash2, CheckCircle } from 'lucide-react';
+import { Upload, Star, Sparkles, Image as ImageIcon, Trash2, CheckCircle } from 'lucide-react';
 import { useMoodSyncStore } from '../../store/useMoodSyncStore';
 
 export const LeftSidebar: React.FC = () => {
@@ -15,7 +15,6 @@ export const LeftSidebar: React.FC = () => {
     applyPreset,
     uploadImages,
     removeImage,
-    toggleUserTier,
   } = useMoodSyncStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -181,7 +180,6 @@ export const LeftSidebar: React.FC = () => {
         <div className="p-2.5 overflow-y-auto grid grid-cols-2 gap-2 flex-1">
           {presets.map((preset) => {
             const isSelected = selectedPresetId === preset.id;
-            const isLocked = preset.isPremium && userTier === 'free';
 
             return (
               <div
@@ -206,22 +204,6 @@ export const LeftSidebar: React.FC = () => {
                   </div>
                 )}
 
-                {/* PRO 잠금/안내 뱃지 */}
-                {preset.isPremium && (
-                  <div 
-                    onClick={(e) => {
-                      if (isLocked) {
-                        e.stopPropagation();
-                        toggleUserTier();
-                      }
-                    }}
-                    className="absolute top-1.5 left-1.5 flex items-center space-x-1"
-                  >
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-amber-500 text-black shadow-sm flex items-center">
-                      {isLocked ? <Lock className="w-2.5 h-2.5 mr-0.5" /> : <Crown className="w-2.5 h-2.5 mr-0.5" />} PRO
-                    </span>
-                  </div>
-                )}
 
                 {/* 하단 타이틀 & 설명 */}
                 <div className="relative z-10">

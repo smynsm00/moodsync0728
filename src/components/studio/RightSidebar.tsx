@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Zap, Sliders, Palette, Code, FileJson, Copy, Check, AlertCircle, Sun, Contrast, Droplets, Thermometer, RotateCcw, Pin, Trash2, Sparkles } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Zap, Sliders, Palette, Code, FileJson, Copy, Check, AlertCircle, Sun, Contrast, Droplets, Thermometer, RotateCcw, Pin, Trash2, Sparkles, GripHorizontal } from 'lucide-react';
 import { useMoodSyncStore } from '../../store/useMoodSyncStore';
 import { getCssFilterString } from '../../utils/filterEngine';
 import { generateJsonDesignTokens, downloadJsonTokens, copyToClipboard } from '../../utils/tokenExtractor';
@@ -30,6 +30,34 @@ export const RightSidebar: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'adjust' | 'handoff'>('adjust');
   const [aiAnalyzing, setAiAnalyzing] = useState(false);
   const [aiAnalysisResult, setAiAnalysisResult] = useState<string | null>(null);
+
+  // A영역 (Tone Lock) vs B영역 (Micro-Adjustments) 상하 크기 조절 상태
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [topSectionHeight, setTopSectionHeight] = useState<number>(40); // 기본 40%
+
+  const handleMouseDownResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = topSectionHeight;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!sidebarRef.current) return;
+      const sidebarRect = sidebarRef.current.getBoundingClientRect();
+      const deltaY = moveEvent.clientY - startY;
+      const deltaPercentage = (deltaY / sidebarRect.height) * 100;
+      // 최솟값 18%, 최댓값 75%
+      const newHeight = Math.max(18, Math.min(75, startHeight + deltaPercentage));
+      setTopSectionHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
   const handleGeminiAiAnalyze = async () => {
     setAiAnalyzing(true);
@@ -86,14 +114,20 @@ export const RightSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="w-80 lg:w-96 h-[calc(100vh-4rem)] border-l border-slate-700/80 bg-[#0B0F19] p-3 space-y-3 flex flex-col overflow-hidden shrink-0">
-      {/* 1. Tone Lock Section Card (Amber/Gold Left Accent) */}
-      <div className="bg-[#111827] border border-slate-700/80 border-l-4 border-l-amber-400 rounded-xl overflow-hidden shadow-xl shrink-0 max-h-[46%] flex flex-col">
+    <aside 
+      ref={sidebarRef}
+      className="w-80 lg:w-96 h-[calc(100vh-4rem)] border-l border-slate-700/80 bg-[#0B0F19] p-3 flex flex-col overflow-hidden shrink-0 select-none"
+    >
+      {/* 1. Tone Lock Section Card (A영역: Amber/Gold Left Accent - 드래그 높이 조절) */}
+      <div 
+        style={{ height: `${topSectionHeight}%` }}
+        className="bg-[#111827] border border-slate-700/80 border-l-4 border-l-amber-400 rounded-xl overflow-hidden shadow-xl shrink-0 flex flex-col transition-[height] duration-75"
+      >
         {/* Card Header Bar */}
         <div className="bg-slate-800/90 px-3 py-2 border-b border-slate-700/80 flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-2">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-            <h2 className="text-xs font-bold text-white tracking-wide">Tone Lock</h2>
+            <h2 className="text-xs font-bold text-white tracking-wide">Tone Lock (A영역)</h2>
           </div>
           <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
             ★ Multiple Slots ({savedToneLocks.length})
@@ -182,7 +216,18 @@ export const RightSidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Micro-Adjustments & Developer Handoff Card (Violet/Purple Left Accent) */}
+      {/* A영역 vs B영역 상하 크기 조절 드래그 바 (Interactive Vertical Resize Divider Handle Bar) */}
+      <div
+        onMouseDown={handleMouseDownResize}
+        className="py-1.5 my-0.5 group cursor-row-resize flex items-center justify-center shrink-0 z-30 transition-colors hover:bg-amber-500/20 rounded-lg select-none"
+        title="드래그하여 A영역/B영역 상하 크기 조절"
+      >
+        <div className="w-20 h-1.5 rounded-full bg-slate-700 group-hover:bg-amber-400 transition-all flex items-center justify-center shadow-md">
+          <GripHorizontal className="w-3.5 h-3.5 text-slate-400 group-hover:text-black transition-colors" />
+        </div>
+      </div>
+
+      {/* 2. Micro-Adjustments & Developer Handoff Card (B영역: Violet/Purple Left Accent) */}
       <div className="bg-[#111827] border border-slate-700/80 border-l-4 border-l-purple-500 rounded-xl overflow-hidden shadow-xl flex-1 flex flex-col min-h-0">
         {/* Tab Header Bar */}
         <div className="bg-slate-800/90 p-1.5 border-b border-slate-700/80 flex space-x-1 shrink-0">

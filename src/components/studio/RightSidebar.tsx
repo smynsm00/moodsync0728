@@ -235,33 +235,38 @@ export const RightSidebar: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Single Icon Save Slot Button */}
-                <button
-                  onClick={() => saveCurrentToneLockSlot()}
-                  className="w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all shadow-lg bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 border border-indigo-400/40 text-white hover:scale-[1.02]"
-                >
-                  <Pin className="w-4 h-4 text-amber-300 fill-current" />
-                  <span>현재 보정값을 고정목록에 추가 (Save Slot)</span>
-                </button>
+                {/* A & B Action Buttons (좌우 2열 배치) */}
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Button A: 현재보정값 고정 */}
+                  <button
+                    onClick={() => saveCurrentToneLockSlot()}
+                    className="py-2 px-2 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-md bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 border border-indigo-400/40 text-white hover:scale-[1.02] truncate"
+                    title="현재보정값 고정"
+                  >
+                    <Pin className="w-3.5 h-3.5 text-amber-300 fill-current shrink-0" />
+                    <span className="truncate">현재보정값 고정</span>
+                  </button>
 
-                {/* Gemini AI Edge Function Call Button */}
-                <button
-                  onClick={handleGeminiAiAnalyze}
-                  disabled={aiAnalyzing}
-                  className="w-full py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-purple-300 hover:text-white"
-                >
-                  {aiAnalyzing ? (
-                    <>
-                      <div className="w-3.5 h-3.5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-                      <span>Gemini Edge Function 분석 중...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-                      <span>Gemini AI 엣지 함수 무드 분석</span>
-                    </>
-                  )}
-                </button>
+                  {/* Button B: Gemini AI 무드분석 */}
+                  <button
+                    onClick={handleGeminiAiAnalyze}
+                    disabled={aiAnalyzing}
+                    className="py-2 px-2 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-purple-300 hover:text-white truncate disabled:opacity-50"
+                    title="Gemini AI 무드분석"
+                  >
+                    {aiAnalyzing ? (
+                      <>
+                        <div className="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin shrink-0" />
+                        <span className="truncate">분석 중...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse shrink-0" />
+                        <span className="truncate">Gemini AI 무드분석</span>
+                      </>
+                    )}
+                  </button>
+                </div>
 
                 {aiAnalysisResult && (
                   <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/40 text-xs text-purple-200 animate-fade-in whitespace-pre-wrap">

@@ -253,3 +253,26 @@ export const deleteToneLockFromSupabase = async (slotId: string): Promise<boolea
     return false;
   }
 };
+
+// 9. Call Supabase Edge Function with Gemini API
+export const analyzeMoodWithGemini = async (prompt: string): Promise<{ success: boolean; aiAnalysis?: string; error?: string }> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('analyze-mood', {
+      body: { prompt }
+    });
+
+    if (error) {
+      console.error('Supabase Edge Function invoke error:', error);
+      return { success: false, error: error.message };
+    }
+
+    if (data?.error) {
+      return { success: false, error: data.error };
+    }
+
+    return { success: true, aiAnalysis: data?.aiAnalysis };
+  } catch (err) {
+    console.error('analyzeMoodWithGemini exception:', err);
+    return { success: false, error: (err as Error).message };
+  }
+};

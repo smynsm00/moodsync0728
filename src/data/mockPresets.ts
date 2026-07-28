@@ -132,19 +132,18 @@ export const MOCK_PRESETS: MoodPreset[] = [
 export const INITIAL_MOCK_IMAGES: ImageAsset[] = [
   {
     id: 'img-1',
-    name: 'Campaign_Hero_01.jpg',
-    originalUrl: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1600&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=400&q=80',
+    name: 'Yosemite_Half_Dome_01.jpg',
+    originalUrl: '/yosemite_half_dome.jpg',
+    thumbnailUrl: '/yosemite_half_dome.jpg',
     isAnchor: true,
-    width: 1600,
-    height: 2400,
+    width: 1920,
+    height: 1080,
     appliedParams: { brightness: 100, contrast: 100, saturation: 100, temperature: 0, tint: 0, sepia: 0, hueRotate: 0 },
     colorPalette: [
-      { hex: '#2C3E50', rgb: 'rgb(44, 62, 80)', hsl: 'hsl(210, 29%, 24%)', name: 'Deep Slate Navy', textColor: '#ffffff', contrastRatio: '9.4:1 (AAA)' },
-      { hex: '#D35400', rgb: 'rgb(211, 84, 0)', hsl: 'hsl(24, 100%, 41%)', name: 'Warm Terracotta', textColor: '#ffffff', contrastRatio: '4.8:1 (AA)' },
-      { hex: '#ECF0F1', rgb: 'rgb(236, 240, 241)', hsl: 'hsl(192, 15%, 94%)', name: 'Cloud White', textColor: '#000000', contrastRatio: '15.2:1 (AAA)' },
-      { hex: '#7F8C8D', rgb: 'rgb(127, 140, 141)', hsl: 'hsl(184, 5%, 53%)', name: 'Muted Pewter', textColor: '#000000', contrastRatio: '4.5:1 (AA)' },
-      { hex: '#16A085', rgb: 'rgb(22, 160, 133)', hsl: 'hsl(168, 76%, 36%)', name: 'Deep Emerald', textColor: '#ffffff', contrastRatio: '5.1:1 (AA)' }
+      { hex: '#D48C56', rgb: 'rgb(212, 140, 86)', hsl: 'hsl(26, 60%, 58%)', name: 'Sunset Peak Gold', textColor: '#000000', contrastRatio: '7.8:1 (AAA)' },
+      { hex: '#4A5D6E', rgb: 'rgb(74, 93, 110)', hsl: 'hsl(208, 20%, 36%)', name: 'Mountain Slate', textColor: '#ffffff', contrastRatio: '6.2:1 (AA)' },
+      { hex: '#9BB8D0', rgb: 'rgb(155, 184, 208)', hsl: 'hsl(207, 40%, 71%)', name: 'Alpenglow Sky', textColor: '#000000', contrastRatio: '11.5:1 (AAA)' },
+      { hex: '#2A3626', rgb: 'rgb(42, 54, 38)', hsl: 'hsl(105, 17%, 18%)', name: 'Pine Forest Shadow', textColor: '#ffffff', contrastRatio: '12.4:1 (AAA)' }
     ]
   },
   {

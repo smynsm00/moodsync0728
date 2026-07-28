@@ -83,7 +83,7 @@ const INITIAL_SAVED_TONES: SavedToneLock[] = [
   {
     id: 'b1111111-1111-1111-1111-111111111111',
     name: 'Master Warm Vintage',
-    anchorImageName: 'Campaign_Hero_01.jpg',
+    anchorImageName: 'Yosemite_Half_Dome_01.jpg',
     params: { brightness: 105, contrast: 90, saturation: 115, temperature: 15, tint: 5, sepia: 20, hueRotate: -5 },
     createdAt: '11:20 AM'
   },

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Zap, Sliders, Palette, Code, FileJson, Copy, Check, AlertCircle, Sun, Contrast, Droplets, Thermometer, RotateCcw, Pin, Trash2 } from 'lucide-react';
+import { Zap, Sliders, Palette, Code, FileJson, Copy, Check, AlertCircle, Sun, Contrast, Droplets, Thermometer, RotateCcw, Pin, Trash2, Sparkles } from 'lucide-react';
 import { useMoodSyncStore } from '../../store/useMoodSyncStore';
 import { getCssFilterString } from '../../utils/filterEngine';
 import { generateJsonDesignTokens, downloadJsonTokens, copyToClipboard } from '../../utils/tokenExtractor';
 import confetti from 'canvas-confetti';
+
+import { analyzeMoodWithGemini } from '../../services/supabaseService';
 
 export const RightSidebar: React.FC = () => {
   const {
@@ -26,6 +28,23 @@ export const RightSidebar: React.FC = () => {
   const [copiedCss, setCopiedCss] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
   const [activeTab, setActiveTab] = useState<'adjust' | 'handoff'>('adjust');
+  const [aiAnalyzing, setAiAnalyzing] = useState(false);
+  const [aiAnalysisResult, setAiAnalysisResult] = useState<string | null>(null);
+
+  const handleGeminiAiAnalyze = async () => {
+    setAiAnalyzing(true);
+    setAiAnalysisResult(null);
+    const result = await analyzeMoodWithGemini(
+      `이 이미지 (${activeImage?.name})의 감성 무드, 색조 특징, 어울리는 필터 밝기/대비/채도 톤 추천을 2줄로 요약해줘.`
+    );
+    setAiAnalyzing(false);
+    if (result.success && result.aiAnalysis) {
+      setAiAnalysisResult(result.aiAnalysis);
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+    } else {
+      setAiAnalysisResult(`⚠️ AI 분석 오류: ${result.error || '응답 실패'}`);
+    }
+  };
 
   const activeImage = images.find((img) => img.id === activeImageId) || images[0];
   const params = activeImage?.appliedParams || { brightness: 100, contrast: 100, saturation: 100, temperature: 0, tint: 0, sepia: 0, hueRotate: 0 };
@@ -224,6 +243,32 @@ export const RightSidebar: React.FC = () => {
                   <Pin className="w-4 h-4 text-amber-300 fill-current" />
                   <span>현재 보정값을 고정목록에 추가 (Save Slot)</span>
                 </button>
+
+                {/* Gemini AI Edge Function Call Button */}
+                <button
+                  onClick={handleGeminiAiAnalyze}
+                  disabled={aiAnalyzing}
+                  className="w-full py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-purple-300 hover:text-white"
+                >
+                  {aiAnalyzing ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                      <span>Gemini Edge Function 분석 중...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+                      <span>Gemini AI 엣지 함수 무드 분석</span>
+                    </>
+                  )}
+                </button>
+
+                {aiAnalysisResult && (
+                  <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/40 text-xs text-purple-200 animate-fade-in whitespace-pre-wrap">
+                    <p className="font-bold text-purple-300 mb-1">🤖 Gemini AI 분석 결과:</p>
+                    {aiAnalysisResult}
+                  </div>
+                )}
               </div>
 
               {/* Brightness */}

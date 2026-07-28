@@ -136,6 +136,25 @@ export const RightSidebar: React.FC = () => {
 
         {/* Card Body */}
         <div className="p-3 overflow-y-auto flex-1 space-y-2.5">
+          {/* Global Sync CTA (상단으로 이동) */}
+          <button
+            onClick={applyToneLock}
+            disabled={isProcessing || images.length <= 1}
+            className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 hover:from-amber-400 hover:to-pink-400 shadow-md shadow-amber-500/25 transition-all disabled:opacity-50 flex items-center justify-center space-x-2 shrink-0"
+          >
+            {isProcessing ? (
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>LAB 매칭 동기화 연산 중...</span>
+              </>
+            ) : (
+              <>
+                <Zap className="w-3.5 h-3.5 text-black fill-current animate-bounce" />
+                <span className="text-black font-extrabold">⚡ 현재 마스터 톤 전체 동기화 ({images.length} Assets)</span>
+              </>
+            )}
+          </button>
+
           {/* Saved Tone Lock Slots Grid */}
           <div className="space-y-2">
             {savedToneLocks.map((slot) => {
@@ -194,25 +213,6 @@ export const RightSidebar: React.FC = () => {
               );
             })}
           </div>
-
-          {/* Global Sync CTA */}
-          <button
-            onClick={applyToneLock}
-            disabled={isProcessing || images.length <= 1}
-            className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 hover:from-amber-400 hover:to-pink-400 shadow-md shadow-amber-500/25 transition-all disabled:opacity-50 flex items-center justify-center space-x-2"
-          >
-            {isProcessing ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>LAB 매칭 동기화 연산 중...</span>
-              </>
-            ) : (
-              <>
-                <Zap className="w-3.5 h-3.5 text-black fill-current animate-bounce" />
-                <span className="text-black font-extrabold">⚡ 현재 마스터 톤 전체 동기화 ({images.length} Assets)</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
 

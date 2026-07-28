@@ -19,7 +19,6 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Get GEMINI-API-KEY secret
     const apiKey = Deno.env.get('GEMINI-API-KEY') || Deno.env.get('GEMINI_API_KEY');
     
     if (!apiKey) {
@@ -37,26 +36,26 @@ serve(async (req) => {
     const systemPrompt = `당신은 최고급 시네마틱 및 브랜드 디자인 사진 보정 AI 아티스트입니다.
 요청된 이미지 (${imageName || '대상 이미지'})에 가장 잘 어울리는 감성 톤앤매너와 보정 파라미터를 추천해 주세요.
 
-반드시 다른 부연설명 없이 순수 JSON 형식으로만 응답해 주세요. 예시:
+반드시 다른 부연설명 없이 순수 JSON 형식으로만 응답해 주세요:
 {
-  "analysis": "해질녘 골든 아워 노을빛과 바위의 암석 질감을 입체감 있게 살린 따뜻하고 감성적인 시네마틱 톤",
+  "analysis": "해질녘 노을의 골든아워 감성과 바위의 웅장한 질감을 입체감 있게 강조한 시네마틱 톤입니다.\\n최적의 밝기, 대비, 색온도 보정 수치가 아래 슬라이더에 자동 세팅되었습니다.",
   "recommendedParams": {
-    "brightness": 110,
-    "contrast": 115,
-    "saturation": 120,
-    "temperature": 15,
+    "brightness": 105,
+    "contrast": 125,
+    "saturation": 115,
+    "temperature": 18,
     "tint": 4
   }
 }
 
-파라미터 조건:
+조건:
+- analysis: 반드시 한국어로 2~3줄 이하의 정갈하고 명확한 요약 문장이어야 합니다.
 - brightness: 80~140 사이 숫자 (기본 100)
 - contrast: 85~140 사이 숫자 (기본 100)
 - saturation: 70~150 사이 숫자 (기본 100)
 - temperature: -30~30 사이 숫자 (기본 0)
 - tint: -20~20 사이 숫자 (기본 0)`;
 
-    // 2. Dynamic model discovery
     let candidateModels: string[] = [
       'gemini-1.5-flash-latest',
       'gemini-1.5-pro',
@@ -84,7 +83,6 @@ serve(async (req) => {
 
     let lastError = '';
 
-    // 3. Request Gemini API
     for (const model of candidateModels) {
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -100,21 +98,20 @@ serve(async (req) => {
         const data = await geminiResponse.json();
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-        let parsedAnalysis = rawText;
+        let parsedAnalysis = "해질녘 골든아워 감성을 살린 시네마틱 톤입니다.\n슬라이더 보정값이 자동으로 적용되었습니다.";
         let recommendedParams: RecommendedParams = {
-          brightness: 110,
-          contrast: 115,
-          saturation: 120,
-          temperature: 15,
-          tint: 5
+          brightness: 105,
+          contrast: 125,
+          saturation: 115,
+          temperature: 18,
+          tint: 4
         };
 
         try {
-          // Clean JSON string if wrapped in markdown codeblock
           const jsonMatch = rawText.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             const parsed = JSON.parse(jsonMatch[0]);
-            if (parsed.analysis) parsedAnalysis = parsed.analysis;
+            if (parsed.analysis) parsedAnalysis = String(parsed.analysis).trim();
             if (parsed.recommendedParams) {
               recommendedParams = {
                 brightness: Math.min(150, Math.max(50, Number(parsed.recommendedParams.brightness) || 100)),
@@ -124,9 +121,11 @@ serve(async (req) => {
                 tint: Math.min(50, Math.max(-50, Number(parsed.recommendedParams.tint) || 0))
               };
             }
+          } else if (rawText) {
+            parsedAnalysis = rawText.trim();
           }
         } catch (jsonErr) {
-          console.warn('Failed to parse Gemini JSON response, using fallback text:', jsonErr);
+          console.warn('Failed to parse Gemini JSON response:', jsonErr);
         }
 
         return new Response(

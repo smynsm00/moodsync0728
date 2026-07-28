@@ -29,6 +29,7 @@ export const RightSidebar: React.FC = () => {
   const [copiedJson, setCopiedJson] = useState(false);
   const [activeTab, setActiveTab] = useState<'adjust' | 'handoff'>('adjust');
   const [aiAnalyzing, setAiAnalyzing] = useState(false);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
 
   // A영역 (Tone Lock) vs B영역 (Micro-Adjustments) 상하 크기 조절 상태
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -60,8 +61,13 @@ export const RightSidebar: React.FC = () => {
 
   const handleGeminiAiAnalyze = async () => {
     setAiAnalyzing(true);
+    setAiSummary(null);
     const result = await analyzeMoodWithGemini(activeImage?.name);
     setAiAnalyzing(false);
+
+    if (result.aiAnalysis) {
+      setAiSummary(result.aiAnalysis);
+    }
 
     if (result.recommendedParams) {
       updateImageParams(result.recommendedParams);
@@ -307,6 +313,19 @@ export const RightSidebar: React.FC = () => {
                     )}
                   </button>
                 </div>
+
+                {/* 3줄 이하 AI 무드 분석 정갈한 요약 카드 */}
+                {aiSummary && (
+                  <div className="mt-2.5 p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/40 text-xs text-purple-200 animate-fade-in shadow-inner">
+                    <div className="flex items-center space-x-1.5 font-bold text-purple-300 mb-1">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse shrink-0" />
+                      <span>Gemini AI 3줄 무드 요약</span>
+                    </div>
+                    <p className="text-[11px] leading-snug text-gray-200 whitespace-pre-line line-clamp-3">
+                      {aiSummary}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Brightness */}

@@ -314,16 +314,37 @@ export const RightSidebar: React.FC = () => {
                   </button>
                 </div>
 
-                {/* 3줄 이하 AI 무드 분석 정갈한 요약 카드 */}
+                {/* 3줄 이하 AI 무드 분석 정갈한 요약 카드 (마우스 오버 시 전체 내용 팝오버 툴팁) */}
                 {aiSummary && (
-                  <div className="mt-2.5 p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/40 text-xs text-purple-200 animate-fade-in shadow-inner">
-                    <div className="flex items-center space-x-1.5 font-bold text-purple-300 mb-1">
-                      <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse shrink-0" />
-                      <span>Gemini AI 3줄 무드 요약</span>
+                  <div 
+                    title={aiSummary}
+                    className="mt-2.5 p-2.5 rounded-xl bg-purple-950/50 border border-purple-500/40 text-xs text-purple-200 animate-fade-in shadow-inner relative group cursor-pointer transition-all duration-300 hover:border-purple-400 hover:bg-purple-950/90 hover:shadow-xl hover:shadow-purple-900/30"
+                  >
+                    <div className="flex items-center justify-between font-bold text-purple-300 mb-1">
+                      <div className="flex items-center space-x-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse shrink-0" />
+                        <span>Gemini AI 무드 분석 요약</span>
+                      </div>
+                      <span className="text-[10px] text-purple-400/80 font-normal group-hover:text-purple-200 transition-colors">
+                        (마우스 오버 전체 보기 🔍)
+                      </span>
                     </div>
-                    <p className="text-[11px] leading-snug text-gray-200 whitespace-pre-line line-clamp-3">
+
+                    {/* 기본 표시 및 마우스 오버 시 전체 펼침 */}
+                    <p className="text-[11px] leading-snug text-gray-200 whitespace-pre-line group-hover:line-clamp-none line-clamp-3 transition-all">
                       {aiSummary}
                     </p>
+
+                    {/* Floating Hover Tooltip Popover (마우스 호버 시 팝오버) */}
+                    <div className="absolute left-0 top-full mt-2 w-full p-3 rounded-xl bg-[#1e1338]/95 border border-purple-400 shadow-2xl text-purple-100 text-xs z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 backdrop-blur-md">
+                      <div className="flex items-center space-x-1.5 font-bold text-purple-300 mb-1.5 pb-1 border-b border-purple-500/30">
+                        <Sparkles className="w-4 h-4 text-purple-400" />
+                        <span>AI 분석 전체 내용</span>
+                      </div>
+                      <p className="text-[11px] leading-relaxed text-gray-100 whitespace-pre-line">
+                        {aiSummary}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

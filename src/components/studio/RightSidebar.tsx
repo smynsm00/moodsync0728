@@ -29,7 +29,6 @@ export const RightSidebar: React.FC = () => {
   const [copiedJson, setCopiedJson] = useState(false);
   const [activeTab, setActiveTab] = useState<'adjust' | 'handoff'>('adjust');
   const [aiAnalyzing, setAiAnalyzing] = useState(false);
-  const [aiAnalysisResult, setAiAnalysisResult] = useState<string | null>(null);
 
   // A영역 (Tone Lock) vs B영역 (Micro-Adjustments) 상하 크기 조절 상태
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -61,16 +60,12 @@ export const RightSidebar: React.FC = () => {
 
   const handleGeminiAiAnalyze = async () => {
     setAiAnalyzing(true);
-    setAiAnalysisResult(null);
-    const result = await analyzeMoodWithGemini(
-      `이 이미지 (${activeImage?.name})의 감성 무드, 색조 특징, 어울리는 필터 밝기/대비/채도 톤 추천을 2줄로 요약해줘.`
-    );
+    const result = await analyzeMoodWithGemini(activeImage?.name);
     setAiAnalyzing(false);
-    if (result.success && result.aiAnalysis) {
-      setAiAnalysisResult(result.aiAnalysis);
-      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-    } else {
-      setAiAnalysisResult(`⚠️ AI 분석 오류: ${result.error || '응답 실패'}`);
+
+    if (result.recommendedParams) {
+      updateImageParams(result.recommendedParams);
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
     }
   };
 
@@ -312,13 +307,6 @@ export const RightSidebar: React.FC = () => {
                     )}
                   </button>
                 </div>
-
-                {aiAnalysisResult && (
-                  <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/40 text-xs text-purple-200 animate-fade-in whitespace-pre-wrap">
-                    <p className="font-bold text-purple-300 mb-1">🤖 Gemini AI 분석 결과:</p>
-                    {aiAnalysisResult}
-                  </div>
-                )}
               </div>
 
               {/* Brightness */}
